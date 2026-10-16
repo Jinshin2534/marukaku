@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>まるかく — 指一本で真円を</title>
+    <meta name="description" content="指一本でフリーハンドの円を描くと、最小二乗で円を当てはめて真円度を採点します。半径のばらつきと描き始め・描き終わりのずれを分けて採点し、描く速さの癖も見せます。" />
+    <meta name="theme-color" content="#f4efe4" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='38' fill='none' stroke='%23c8402a' stroke-width='9'/></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <canvas id="pad" aria-label="ここに指で円を描く"></canvas>
+
+    <header class="top">
+      <h1 class="logo">まる<span>かく</span></h1>
+      <div class="topRight">
+        <div class="best" id="best" hidden></div>
+        <button class="ghost" id="demoBtn" title="合成した円を自動で描いて採点します(記録には残りません)">合成デモ</button>
+      </div>
+    </header>
+
+    <div class="hint" id="hint">
+      <p class="big">指一本で、円をひとつ。</p>
+      <p class="small">ぐるっと一周。離したところで採点します。</p>
+    </div>
+
+    <div class="stamp" id="stamp" hidden>
+      <div class="num" id="num">0</div>
+      <div class="tier" id="tier"></div>
+    </div>
+
+    <div class="toast" id="toast" hidden></div>
+
+    <section class="sheet peek" id="sheet" hidden>
+      <button class="handle" id="handle" aria-expanded="false">詳しく見る</button>
+      <div class="rows">
+        <div class="row">
+          <div class="label">半径のばらつき</div>
+          <div class="val" id="vRound"></div>
+          <div class="bar"><i id="bRound"></i></div>
+        </div>
+        <div class="row">
+          <div class="label">描き始めと終わりのずれ</div>
+          <div class="val" id="vClose"></div>
+          <div class="bar"><i id="bClose"></i></div>
+        </div>
+      </div>
+      <p class="diag" id="diag"></p>
+
+      <div class="speed">
+        <div class="speedHead">
+          <span class="label">描く速さの変化</span>
+          <span class="legend"><i class="me"></i>今回<span id="pbLegend"><i class="pb"></i>自己ベストのとき</span></span>
+        </div>
+        <div class="chartWrap"><span class="meanLabel" id="meanLabel">平均</span><svg id="speedSvg" viewBox="0 0 300 90" preserveAspectRatio="none" aria-label="描く速さの変化"></svg></div>
+        <div class="axis"><span>描き始め</span><span>半周</span><span>描き終わり</span></div>
+        <p class="speedNote" id="speedNote"></p>
+        <p class="habit" id="habit"></p>
+      </div>
+
+      <div class="controls">
+        <div class="seg" role="radiogroup" aria-label="線の色分け">
+          <button data-color="dev" aria-pressed="true">色: ずれ</button>
+          <button data-color="speed" aria-pressed="false">色: 速さ</button>
+        </div>
+        <span class="label" id="meta"></span>
+      </div>
+
+      <details class="how">
+        <summary>どうやって採点しているか</summary>
+        <ul>
+          <li>描いた線を長さで等間隔に取り直し（ゆっくり描いた所の点が多くなる偏りを消す）、<b>最小二乗法で円を当てはめ</b>ます（代数解→幾何距離で詰める）。点線がその円です。</li>
+          <li><b>半径のばらつき</b> = 当てはめた円からの半径方向のずれの二乗平均を半径で割ったもの。10%で50点、0%で100点のなだらかな曲線です。</li>
+          <li><b>ずれ</b> = 描き始めと描き終わりの距離を半径で割ったもの。25%で50点。一周を超えたぶんは切り落として測ります。</li>
+          <li>合計 = ばらつき 75% ＋ ずれ 25%。向き・位置・大きさ・描く速さでは点は変わりません。</li>
+          <li>一周の3/4に届かない、小さすぎる、往復が多い線には<b>点をつけません</b>。</li>
+          <li>「楕円ぎみ」は、半径のずれのうち半周ごとに繰り返す成分（2倍周波数）が半分以上を占めるときに出します。</li>
+          <li>描いた線はこの端末の中だけで処理し、どこにも送りません。記録はこのブラウザに保存されます。</li>
+        </ul>
+      </details>
+    </section>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,135 @@
+:root {
+  --paper: #f4efe4;
+  --paper-2: #ebe4d4;
+  --ink: #23201b;
+  --ink-soft: #6b6458;
+  --line: #d8cfbc;
+  --shu: #c8402a;      /* 朱 */
+  --ai: #2d5f8a;       /* 藍 */
+  --ok: #3d7a4f;
+  --sheet: rgba(250, 247, 240, 0.96);
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; height: 100%; overflow: hidden;
+  background: var(--paper); color: var(--ink);
+  font-family: 'Zen Maru Gothic', system-ui, sans-serif;
+  -webkit-user-select: none; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+#pad {
+  position: fixed; inset: 0; width: 100vw; height: 100dvh;
+  touch-action: none; cursor: crosshair; display: block;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255,255,255,.55), transparent 65%),
+    var(--paper);
+}
+.top {
+  position: fixed; top: 0; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: max(12px, env(safe-area-inset-top)) 16px 8px;
+  pointer-events: none;
+}
+.logo { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: .06em; }
+.logo span { color: var(--shu); }
+.best { font-size: 13px; color: var(--ink-soft); background: var(--paper-2); padding: 4px 10px; border-radius: 99px; }
+.best b { color: var(--ink); font-size: 15px; }
+
+.hint {
+  position: fixed; left: 0; right: 0; top: 42%; transform: translateY(-50%);
+  text-align: center; pointer-events: none; transition: opacity .25s;
+}
+.hint .big { font-size: clamp(22px, 5vw, 30px); font-weight: 700; margin: 0 0 6px; }
+.hint .small { color: var(--ink-soft); margin: 0; font-size: 14px; }
+.hint.gone { opacity: 0; }
+
+.stamp {
+  position: fixed; transform: translate(-50%, -50%);
+  text-align: center; pointer-events: none;
+  animation: pop .35s cubic-bezier(.2, 1.6, .4, 1);
+}
+.stamp .num {
+  font-size: clamp(44px, 12vw, 84px); font-weight: 900; line-height: 1;
+  color: var(--shu); font-variant-numeric: tabular-nums; letter-spacing: -.02em;
+}
+.stamp .tier {
+  display: inline-block; margin-top: 6px; padding: 2px 12px;
+  border: 2px solid var(--shu); border-radius: 6px; color: var(--shu);
+  font-weight: 900; font-size: 15px; transform: rotate(-4deg);
+}
+.stamp.best-new .tier::after { content: ' 自己ベスト！'; }
+@keyframes pop { from { transform: translate(-50%, -50%) scale(.6); opacity: 0; } }
+
+.toast {
+  position: fixed; left: 50%; top: 18%; transform: translateX(-50%);
+  max-width: min(92vw, 420px); background: var(--ink); color: var(--paper);
+  padding: 10px 16px; border-radius: 12px; font-size: 14px; text-align: center;
+  pointer-events: none;
+}
+
+.sheet {
+  position: fixed; left: 50%; bottom: 0; transform: translateX(-50%);
+  width: min(100vw, 560px); max-height: 48dvh; overflow-y: auto;
+  background: var(--sheet); border: 1px solid var(--line); border-bottom: 0;
+  border-radius: 18px 18px 0 0; padding: 14px 16px max(14px, env(safe-area-inset-bottom));
+  box-shadow: 0 -6px 24px rgba(60, 50, 30, .08);
+  animation: up .3s ease-out; -webkit-user-select: text; user-select: text;
+}
+@keyframes up { from { transform: translate(-50%, 30px); opacity: 0; } }
+.label { font-size: 13px; color: var(--ink-soft); }
+.rows { display: grid; gap: 10px; }
+.row { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: baseline; }
+.row .val { font-weight: 700; font-variant-numeric: tabular-nums; }
+.row .val small { color: var(--ink-soft); font-weight: 500; }
+.bar { grid-column: 1 / -1; height: 6px; background: var(--paper-2); border-radius: 99px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--shu); border-radius: 99px; transition: width .5s; }
+.diag { margin: 12px 0 0; font-size: 14px; }
+.diag:empty { display: none; }
+.speed { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); }
+.speedHead { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.legend { font-size: 12px; color: var(--ink-soft); display: flex; align-items: center; gap: 4px; }
+.legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; margin-left: 6px; }
+.legend .me { background: var(--ai); }
+.legend .pb { background: repeating-linear-gradient(90deg, var(--ink-soft) 0 3px, transparent 3px 5px); }
+#speedSvg { width: 100%; height: 90px; display: block; margin-top: 6px; }
+.axis { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-soft); }
+.speedNote, .habit { margin: 8px 0 0; font-size: 13px; }
+.habit { color: var(--ink-soft); }
+.habit b { color: var(--ink); }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; margin-top: 14px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 99px; overflow: hidden; }
+button {
+  font: inherit; font-size: 13px; color: var(--ink); background: transparent;
+  border: 0; padding: 7px 12px; cursor: pointer;
+}
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.ghost { border: 1px solid var(--line); border-radius: 99px; }
+.ghost:hover, .seg button:hover { background: var(--paper-2); }
+.seg button[aria-pressed="true"]:hover { background: var(--ink); }
+.how { margin-top: 12px; font-size: 13px; color: var(--ink-soft); }
+.how summary { cursor: pointer; }
+.how ul { padding-left: 1.2em; line-height: 1.7; }
+.how b { color: var(--ink); }
+.topRight { display: flex; align-items: center; gap: 8px; }
+.topRight button { pointer-events: auto; background: var(--paper); }
+#meta { align-self: center; font-size: 12px; }
+.chartWrap { position: relative; }
+.meanLabel { position: absolute; left: 0; transform: translateY(-120%); font-size: 10px; color: var(--ink-soft); }
+.handle {
+  display: block; margin: -6px auto 8px; padding: 4px 14px; font-size: 12px; color: var(--ink-soft);
+}
+.handle::before { content: ''; display: block; width: 36px; height: 4px; border-radius: 2px; background: var(--line); margin: 0 auto 4px; }
+.sheet.peek { max-height: 30dvh; overflow: hidden; }
+.sheet:not(.peek) { max-height: 78dvh; }
+/* 広い画面では右側のパネルにして円を隠さない */
+@media (min-width: 900px) {
+  .sheet, .sheet.peek, .sheet:not(.peek) {
+    left: auto; right: 20px; top: 76px; bottom: auto; transform: none;
+    width: 360px; max-height: calc(100dvh - 96px); overflow-y: auto;
+    border-radius: 18px; border-bottom: 1px solid var(--line);
+    animation-name: slide;
+  }
+  .handle { display: none; }
+  @keyframes slide { from { transform: translateX(20px); opacity: 0; } }
+}
