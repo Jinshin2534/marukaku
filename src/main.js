@@ -92,7 +92,11 @@ function describeSpeed(p) {
     return f < 0.2 ? '描き始め' : f < 0.4 ? '前半' : f < 0.6 ? '半周あたり' : f < 0.8 ? '後半' : '描き終わり';
   };
   const evenness = p.cv < 0.12 ? 'とても一定' : p.cv < 0.25 ? 'わりと一定' : p.cv < 0.45 ? 'メリハリあり' : 'かなり緩急あり';
-  return `一周 ${(p.durationMs / 1000).toFixed(2)}秒・速さのむら ${Math.round(p.cv * 100)}%（${evenness}）。いちばん速いのは${where(p.peakBin)}、いちばん溜めたのは${where(p.slowBin)}。`;
+  const fast = where(p.peakBin), slow = where(p.slowBin);
+  const pos = fast === slow
+    ? `いちばん速い所といちばん溜めた所が、どちらも${fast}にあります。`
+    : `いちばん速いのは${fast}、いちばん溜めたのは${slow}。`;
+  return `一周 ${(p.durationMs / 1000).toFixed(2)}秒・速さのむら ${Math.round(p.cv * 100)}%（${evenness}）。${pos}`;
 }
 
 function describeHabit() {
